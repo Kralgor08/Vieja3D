@@ -177,32 +177,30 @@ def diagonalesEnZ(superTablero, lista, argumento):
 			for casilla in range(len(superTablero[tableros][fila])):
 				if argumento:
 					lista.append(superTablero[tableros][fila][casilla])
-				else:
-					pass
+
 	return lista
 
 
-def lineaDiagonalHecha(superTablero, tablero):
+def lineaDiagonalHecha(superTablero, tablero,filat,casillat):
 	"""
 		Coloca los elementos de la diagonal principal del tablero actual en un
 		arreglo. Luego verifica si hay linea.
 	"""
 	
 	diagonalEnTablero = []
-	for fila in range(len(superTablero[tablero])):
-		for casilla in range(len(superTablero[tablero][fila])):
-			if fila == casilla:
-				diagonalEnTablero.append(superTablero[tablero][fila][casilla])
-			else:
-				pass
+	if filat == casillat:
+		for fila in range(len(superTablero[tablero])):
+			for casilla in range(len(superTablero[tablero][fila])):
+				if fila == casilla:
+					diagonalEnTablero.append(superTablero[tablero][fila][casilla])
 
 	diagonalSecundariaEnTablero = []
-	for fila in range(len(superTablero[tablero])):
-		for casilla in range(len(superTablero[tablero][fila])):
-			if casilla == len(superTablero)-1 - fila:
-				diagonalSecundariaEnTablero.append(superTablero[tablero][fila][casilla])
-			else:
-				pass
+	if casillat == len(superTablero)-1 - filat:
+		for fila in range(len(superTablero[tablero])):
+			for casilla in range(len(superTablero[tablero][fila])):
+				if casilla == len(superTablero)-1 - fila:
+					diagonalSecundariaEnTablero.append(superTablero[tablero][fila][casilla])
+
 	
 	"""
 		El supertablero posee un numero fijo de esquinas, 6, y cada una de las
@@ -211,45 +209,58 @@ def lineaDiagonalHecha(superTablero, tablero):
 		El total de diagonales unicas es 12, sin contar las del tablero. Los elementos de estas
 		diagonales se pueden obtener cambiando algunos argumentos if.  
 	"""
-
+	"""
 	diagonalEnZ1 = []
-	diagonalEnZ1 = diagonalesEnZ(superTablero, diagonalEnZ1, tablero == fila == casilla)
+	if tablero == filat == casillat:
+		diagonalEnZ1 = diagonalesEnZ(superTablero, diagonalEnZ1, tablero == fila == casilla)
 
 	diagonalEnZ2 = []
-	diagonalEnZ2 = diagonalesEnZ(superTablero, diagonalEnZ2, fila == 0 and tablero == casilla)
+	if filat == 0 and tablero == casillat:
+		diagonalEnZ2 = diagonalesEnZ(superTablero, diagonalEnZ2, fila == 0 and tablero == casilla)
 
 	diagonalEnZ3 = []
-	diagonalEnZ3 = diagonalesEnZ(superTablero, diagonalEnZ3, casilla == 0 and tablero == fila)
+	if casillat == 0 and tablero == filat:
+		diagonalEnZ3 = diagonalesEnZ(superTablero, diagonalEnZ3, casilla == 0 and tablero == fila)
 
 	diagonalEnZ4 = []
-	diagonalEnZ4 = diagonalesEnZ(superTablero, diagonalEnZ4, fila == len(superTablero) -1 - tablero and casilla == len(superTablero) -1 - tablero)
+	if filat == len(superTablero) -1 - tablero and casillat == len(superTablero) -1 - tablero:
+		diagonalEnZ4 = diagonalesEnZ(superTablero, diagonalEnZ4, fila == len(superTablero) -1 - tablero and casilla == len(superTablero) -1 - tablero)
 	
 	diagonalEnZ5 = []
-	diagonalEnZ5 = diagonalesEnZ(superTablero, diagonalEnZ5, fila == 0 and casilla == len(superTablero)-1 - tablero)
-
+	if filat == 0 and casillat == len(superTablero)-1 - tablero:
+		diagonalEnZ5 = diagonalesEnZ(superTablero, diagonalEnZ5, fila == 0 and casilla == len(superTablero)-1 - tablero)
+	
 	diagonalEnZ6 = []
-	diagonalEnZ5 = diagonalesEnZ(superTablero, diagonalEnZ6, casilla == 0 and fila == len(superTablero) -1 -tablero)
-
+	if casillat == 0 and filat == len(superTablero) -1 -tablero:
+		
+		diagonalEnZ5 = diagonalesEnZ(superTablero, diagonalEnZ6, casilla == 0 and fila == len(superTablero) -1 -tablero)
+	
 	diagonalEnZ7 = []
-	diagonalEnZ7 = diagonalesEnZ(superTablero, diagonalEnZ7, casilla == len(superTablero)-1 and tablero == len(superTablero)-1 -fila)
-
+	if casillat == len(superTablero)-1 and tablero == len(superTablero)-1 -filat:
+		
+		diagonalEnZ7 = diagonalesEnZ(superTablero, diagonalEnZ7, casilla == len(superTablero)-1 and tablero == len(superTablero)-1 -fila)
+	
 	diagonalEnZ8 = []
-	diagonalEnZ8 = diagonalesEnZ(superTablero, diagonalEnZ8, fila == len(superTablero)-1 and tablero == len(superTablero)-1 - casilla)
-
+	if filat == len(superTablero)-1 and tablero == len(superTablero)-1 - casillat:
+		diagonalEnZ8 = diagonalesEnZ(superTablero, diagonalEnZ8, fila == len(superTablero)-1 and tablero == len(superTablero)-1 - casilla)
+	
 	diagonalEnZ9 = []
-	diagonalEnZ9 = diagonalesEnZ(superTablero, diagonalEnZ9, casilla == len(superTablero)-1 and tablero == fila)
-
+	if casillat == len(superTablero)-1 and tablero == filat:
+		diagonalEnZ9 = diagonalesEnZ(superTablero, diagonalEnZ9, casilla == len(superTablero)-1 and tablero == fila)
+	
 	diagonalEnZ10 = []
-	diagonalEnZ10 = diagonalesEnZ(superTablero, diagonalEnZ10, fila == len(superTablero)-1 and tablero == casilla)
-
+	if filat == len(superTablero)-1 and tablero == casillat:
+		diagonalEnZ10 = diagonalesEnZ(superTablero, diagonalEnZ10, fila == len(superTablero)-1 and tablero == casilla)
+	
 	diagonalEnZ11 = []
-	diagonalEnZ11 = diagonalesEnZ(superTablero, diagonalEnZ11, fila == len(superTablero)-1 -tablero and tablero == casilla)
-
+	if filat == len(superTablero)-1 -tablero and tablero == casillat:
+		diagonalEnZ11 = diagonalesEnZ(superTablero, diagonalEnZ11, fila == len(superTablero)-1 -tablero and tablero == casilla)
+	
 	diagonalEnZ12 = []
-	diagonalEnZ12 = diagonalesEnZ(superTablero, diagonalEnZ12, fila == tablero and fila == len(superTablero)-1 -casilla)
-
-
-	lineas = verificarListaCompleja(diagonalEnTablero, diagonalSecundariaEnTablero, diagonalEnZ1, diagonalEnZ2, diagonalEnZ3, diagonalEnZ4, diagonalEnZ5, diagonalEnZ6, diagonalEnZ7, diagonalEnZ8, diagonalEnZ9, diagonalEnZ10, diagonalEnZ11, diagonalEnZ12)
+	if filat == tablero and filat == len(superTablero)-1 -casillat:
+		diagonalEnZ12 = diagonalesEnZ(superTablero, diagonalEnZ12, fila == tablero and fila == len(superTablero)-1 -casilla)
+	"""
+	lineas = verificarListaCompleja(diagonalEnTablero, diagonalSecundariaEnTablero)
 
 	return lineas
 
@@ -258,10 +269,8 @@ def lineaDiagonalHecha(superTablero, tablero):
 # Revisa cuantas lineas en total se han hecho y devuelve ese numero
 def lineaHecha(superTablero, tablero, fila, casilla, turno,jugadorActual):
 	lineasVerticales = lineaVerticalHecha(superTablero, tablero, fila, casilla)
-	lineasDiagonales = lineaDiagonalHecha(superTablero, tablero)
+	lineasDiagonales = lineaDiagonalHecha(superTablero, tablero, fila, casilla)
 	lineasTotales = jugadorActual.lineas
-
-	print(lineasVerticales)
 
 	if lineaHorizontalHecha(superTablero, tablero, fila):
 		lineasTotales += 1
@@ -270,7 +279,6 @@ def lineaHecha(superTablero, tablero, fila, casilla, turno,jugadorActual):
 	if lineasDiagonales > 0:
 		lineasTotales += lineasDiagonales
 
-	print(lineasTotales)
 	return lineasTotales
 
 # Anade lineas al jugador actual si tuvo alguna
@@ -283,9 +291,8 @@ def anadirLinea(lineasHechas, jugadorActual):
 # El puntaje aumenta cuando se hace una linea, pero aumenta
 # aun mas cuando se hace mas de una linea con una jugada.
 def anadirPuntos(lineasHechas, jugadorActual):
-	for lineas in range(lineasHechas):
-		if lineas >= 0:
-			jugadorActual.puntos += lineas*1000
+	if lineasHechas > jugadorActual.lineas:
+			jugadorActual.puntos += lineasHechas*1000
 	return jugadorActual.puntos
 
 # Elige aleatoriamente el primer jugador de la partida
@@ -308,7 +315,6 @@ def cambiarJugador(turnoJugadorActual):
 # Devuelve un error y no suma al contador del while principal,
 # por lo tanto el jugador actual no ha cumplido su turno
 def error(screen):
-	print("La jugada no es valida.")
 	fuente=pygame.font.SysFont(None, 23)
 	dibujarTexto("La jugada no es valida", fuente, screen, 617, 240, (255, 255, 255))
 	
@@ -561,7 +567,7 @@ def dibujarTablero(superficie, largoTab, altoTab, X, Y,posX,posY, color,Dimensio
 	pygame.draw.circle(rectTablero,color,(largoTab-30,altoTab-30),30)
 	pygame.draw.rect(rectTablero,color,[100,100, largoTab-200, altoTab-200])
 	if booleano:
-		"""
+		
 		for nums in range(Dimension-1):
 			pygame.draw.line(rectTablero,negro,[0+(largoTab//Dimension)+p,0],[0+(largoTab//Dimension)+p,altoTab],2)
 			pygame.draw.line(rectTablero,negro,[0,(altoTab//Dimension)+q],[largoTab,(altoTab//Dimension)+q],2)
@@ -571,7 +577,7 @@ def dibujarTablero(superficie, largoTab, altoTab, X, Y,posX,posY, color,Dimensio
 		for filas in range(0, 348, largoTab//Dimension):
 			for columnas in range(0, 344, altoTab//Dimension):
 				cuadros=pygame.draw.rect(rectTablero, negro, ((filas, columnas), (largoTab, altoTab)), 2)
-		
+		"""
 
 	superficie.blit(rectTablero,(posX, posY))
 
@@ -628,18 +634,6 @@ def dibujarCasillas(Dimension,largoTab,altoTab,numeroDeTabs,screen):
 
 	return casillas
 
-def getCasilla(posX,posY,margenLeft,margenSup,lado,dimension):
-	if (margenSup<posY<margenSup+lado*dimension) and (margenLeft<posX<margenLeft+lado*dimension) :
-		fila = int((posY-margenSup)/lado)
-		columna = int((posX-margenLeft)/lado)
-	print(fila,columna)
-
-def getCasillaArrecha(posX,posY,margenLeft,margenSup,lado,dimension,tablero,deltaX,deltaY):
-	if (margenSup<posY<margenSup+lado*dimension) and (margenLeft<posX<margenLeft+lado*dimension) :
-		fila = int((posY-margenSup)/lado)
-		columna = int((posX-margenLeft)/lado)
-	return (fila,columna)
-
 def dibujarFicha(superficie, rect, screen, posX,posY,mult,turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs):
 	dibujarCositos(verde_feo,screen,X,Y,oscuro,Dimension,numeroDeTabs-1)
 	if turno == 1:
@@ -651,7 +645,6 @@ def dibujarFicha(superficie, rect, screen, posX,posY,mult,turno,verde_feo,X,Y,os
 		imagen = pygame.transform.scale(imagen, (300//Dimension, 299//Dimension))
 	
 	pos = superficie.get_rect()
-	print (rect)
 	q = 6*mult
 	p = 5*mult
 	superficie.blit(imagen,(rect[0]-(348//Dimension)-10,rect[1]-(344//Dimension)-10))
@@ -694,13 +687,17 @@ def resultado(jugador1, jugador2, font, screen,Dimension):
 	dibujarTablero(screen,700,500,800,600,50,50,(0,0,0,100),Dimension)
 
 	if jugador1.lineas>jugador2.lineas:
-		dibujarTexto(str(jugador1.nombre)+"  has ganado", font, screen, 268, 70, (255, 255, 255))
-		dibujarTexto("con   "+str(jugador1.lineas)+" lineas", font, screen, 270, 123, (255, 255, 255))
+		dibujarTexto(str(jugador1.nombre)+", has ganado", font, screen, 268-10*len(jugador1.nombre), 70, (255, 255, 255))
+		dibujarTexto("con "+str(jugador1.lineas)+" lineas", font, screen, 275, 123, (255, 255, 255))
 	elif jugador2.lineas>jugador1.lineas:
-		dibujarTexto(str(jugador2.nombre)+" has ganado", font, screen, 268, 70, (255, 255, 255))
-		dibujarTexto("con "+str(jugador2.lineas)+" lineas", font, screen, 270, 123, (255, 255, 255))
+		dibujarTexto(str(jugador2.nombre)+", has ganado", font, screen, 268-10*len(jugador2.nombre), 70, (255, 255, 255))
+		dibujarTexto("con "+str(jugador2.lineas)+" lineas", font, screen, 275, 123, (255, 255, 255))
 	elif jugador2.lineas==jugador1.lineas:
-		dibujarTexto("empatados", font, screen, 70, 50, (255, 255, 255))
+		dibujarTexto("Empatados", font, screen, 70, 50, (255, 255, 255))
+
+	dibujarTexto("Puntaje Total: ", font, screen, 60,186,(255,255,255))
+	dibujarTexto(jugador1.nombre + ": " + str(jugador1.puntos), font, screen, 60,259,(255,255,255))
+	dibujarTexto(jugador2.nombre + ": " + str(jugador2.puntos), font, screen, 60,312,(255,255,255))
 
 		
 def main():
@@ -790,21 +787,7 @@ def main():
 							enCuadroDim = False
 
 					if runningJuego and len(tableros) > 0:
-						######AQUI ESTA LA MATRIZ QUE TE INDICA EN 	QUE FILA Y COLUMNA ESTA POSICIONADO EL MOUSE
-						"""
-						grid = [[0 for x in range(largoTab)] for y in range(altoTab)]
-						pos = pygame.mouse.get_pos()  
-						print pos
-						#ESTO TODAVIA NO SA LA FILA QUE ES
-						fila=pos[1]//(altoTab+2)
-						print fila
-				
 						
-						posX, posY = event.pos
-						fila,columna =getCasilla(posX,posY,margenLeft,margenSup,lado,Dimension)
-						print("Estoy en la pos: ",(posX, posY))
-						print "Estoy en la fila/columna: ",fila,columna"""
-
 						if 0 < espacioLibre <= Dimension*Dimension*Dimension:
 							for fil in range(len(casillas)):
 								for casilla in range(len(casillas[fil])): 
@@ -816,9 +799,10 @@ def main():
 											lineasHechas = lineaHecha(superTablero, z,y,x,jugadorActual.turno,jugadorActual)
 											letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
 											if lineasHechas > 0:
-												jugadorActual.lineas = anadirLinea(lineasHechas, jugadorActual)
 												jugadorActual.puntos = anadirPuntos(lineasHechas, jugadorActual)
+												jugadorActual.lineas = anadirLinea(lineasHechas, jugadorActual)
 												letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
+											lineasHechas = 0
 											espacioLibre += -1
 
 											if espacioLibre == 0:
@@ -834,7 +818,8 @@ def main():
 												elif cambiarJugador(jugadorActual.turno) == 2:
 													jugadorActual = jugador2
 													letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
-										
+												dibujarTexto(jugadorActual.nombre + " es tu turno", font, screen, 280-10*len(jugadorActual.nombre),60,(255,255,255))
+
 										elif not esValida(superTablero, z,y,x):
 											error(screen)
 										
@@ -849,6 +834,7 @@ def main():
 							tableroActual = tableros[numTableroActual]
 							imprimirTablerosRestantes(verde_feo,screen,largoTab,altoTab,X,Y,oscuro,Dimension,tableros)
 							casillas = dibujarCasillas(Dimension,largoTab,altoTab,numeroDeTabs, screen)
+							dibujarTexto(jugadorActual.nombre + " es tu turno", font, screen, 280-10*len(jugadorActual.nombre),60,(255,255,255))
 							letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
 
 
@@ -905,6 +891,7 @@ def main():
 							tableroActual = tableros[numTableroActual]
 							imprimirTablerosRestantes(verde_feo,screen,largoTab,altoTab,X,Y,oscuro,Dimension,tableros)
 							casillas = dibujarCasillas(Dimension,largoTab,altoTab,numeroDeTabs, screen)
+							dibujarTexto(jugadorActual.nombre + " es tu turno", font, screen, 280-10*len(jugadorActual.nombre),60,(255,255,255))
 							letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
 		
 		if empezarJuego:
@@ -929,6 +916,7 @@ def main():
 				elif turno == jugador2.turno:
 					jugadorActual = jugador2
 
+			dibujarTexto(jugadorActual.nombre + " es tu turno", font, screen, 280-10*len(jugadorActual.nombre),60,(255,255,255))
 		# Actualiza la superficie
 		pygame.display.flip()
 
