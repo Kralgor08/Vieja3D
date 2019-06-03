@@ -19,3 +19,12 @@ Y Pygame (Testeado con Pygame 1.9.6):
 
 https://pypi.org/project/pygame/
 
+
+
+# Apoyo
+
+Sin Python y Pygame este proyecto no existiría, por favor, echa un vistazo y aporta a sus repos:
+
+https://github.com/pygame/pygame
+
+https://github.com/python/cpython
