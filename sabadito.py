@@ -14,6 +14,7 @@
 		  [0, 0, 0]] ]
 
 """
+
 import random
 import pygame
 import math
@@ -109,7 +110,6 @@ def reflejarEnTablero(superTablero, tablero, fila, casilla, turno):
 
 # Verifica si todos los elementos de una lista son iguales
 def verificarLista(lista):
-	Dimension = 3
 	"""
 		Si la cantidad de ocurrencias del primer elemento de la lista
 		es igual al tamano de la lista, todos los elementos son 
@@ -305,9 +305,11 @@ def elegirJugador():
 def cambiarJugador(turnoJugadorActual):
 	
 	if turnoJugadorActual == 1:
+		pygame.mouse.set_cursor(*pygame.cursors.diamond)
 		turno = 2
 	
 	elif turnoJugadorActual == 2:
+		pygame.mouse.set_cursor(*pygame.cursors.broken_x)
 		turno = 1
 
 	return turno
@@ -710,6 +712,10 @@ def resultado(jugador1, jugador2, font, screen,Dimension):
 	return rectsi, rectno
 
 
+def salir(font, screen):
+	screen.fill([4, 126, 126])
+	dibujarTexto("Gracias por jugar!", font, screen, 260, 260, (255,255,255))
+
 		
 def main():
 	## Pygame 
@@ -730,6 +736,7 @@ def main():
 	dimensionString = ""
 	enBox1 = False
 	enBox2 = False
+
 	font = pygame.font.SysFont("OpenSansSemibold", 32)
 	enCuadroDim = False
 	oscuro = (0,0,0,100)
@@ -780,6 +787,8 @@ def main():
 						elif enSalir:
 							click(posCuadros, posRectWinY + 80 + 75 + 81, 120, 25,"Salir", posCuadros + 40,posRectWinY + 80 + 75 + 86,negro,gris_claro,winlogo,screen,Y)
 							iniciarMenu = False
+							running = False
+							salir(font, screen)
 						elif enExtras:
 							click(2, Y - 23, 70, 20,"Extras",23,Y - 18,negro,gris_claro,winlogo,screen,Y)   
 							iniciarMenu = False
@@ -800,13 +809,24 @@ def main():
 
 					if aResultado:
 						if rectsi.collidepoint(pygame.mouse.get_pos()):
-							iniciarMenu = True
-							aResultado = False
+							iniciarNombres = True
+							box1, box2, cuadroDimension = entradatexto(screen)
+							iniciarMenu = False
+							empezarJuego = False
+							p = 8*len(jugador1.nombre)
+							q = 8*len(jugador2.nombre)
+							r = 8*len(dimensionString)
+							
+							dibujarTexto(jugador1.nombre, font, screen,105+(251+233)//2-p, 105, negro)
+							dibujarTexto(jugador2.nombre, font, screen, 105+(251+233)//2-q, 208, negro)
+							dibujarTexto(dimensionString, font, screen, 125+(251+233)//2-r, 445, negro)
 							#guardarpuntajes()
 
 						elif rectno.collidepoint(pygame.mouse.get_pos()):
 							aResultado = False
-							#salir()
+							salir(font, screen)
+							running = False
+							#guardarpuntajes()
 
 					if runningJuego and len(tableros) > 0:
 						
@@ -831,6 +851,7 @@ def main():
 												runningJuego = False
 												aResultado = True
 												font2 = pygame.font.SysFont("OpenSansSemibold", 45)
+												pygame.mouse.set_cursor(*pygame.cursors.tri_left)
 												rectsi, rectno = resultado(jugador1, jugador2, font2, screen,Dimension)
 
 											elif espacioLibre > 0:
@@ -935,42 +956,16 @@ def main():
 			
 				if turno == jugador1.turno:
 					jugadorActual = jugador1
+					pygame.mouse.set_cursor(*pygame.cursors.broken_x)
 				
 				elif turno == jugador2.turno:
 					jugadorActual = jugador2
+					pygame.mouse.set_cursor(*pygame.cursors.diamond)
 
 			dibujarTexto(jugadorActual.nombre + ", es tu turno", font, screen, 240-10*len(jugadorActual.nombre),60,(255,255,255))
 		# Actualiza la superficie
 		pygame.display.flip()
 
-	# Parte Logica
-	"""
-	while OtraPartida == True:
-		espacioLibre = 0
-		turno = elegirJugador()
-		
-		while espacioLibre < Dimension*Dimension*Dimension:
-			
-			if turno == jugador1.turno:
-				jugadorActual = jugador1
-			
-			elif turno == jugador2.turno:
-				jugadorActual = jugador2
+	pygame.time.wait(1000)
 
-			k = obtenerJugada()
-			if esValida(superTablero, *k):
-				superTablero = reflejarEnTablero(superTablero, *k)
-				lineasHechas = lineaHecha(superTablero, *k)
-				
-				if lineasHechas > 0:
-					jugadorActual.lineas = anadirLinea(lineasHechas, jugadorActual)
-					jugadorActual.puntos = anadirPuntos(lineasHechas, jugadorActual)
-				espacioLibre += 1
-				cambiarJugador(jugadorActual.turno)
-			
-			elif not esValida(superTablero, *k):
-				error()
-		resultado()
-		superTablero, Dimension, OtraPartida, jugador1, jugador2 = jugarDeNuevo()
-"""
 main()
