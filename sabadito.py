@@ -769,8 +769,7 @@ def main():
 
 			if event.type == pygame.QUIT:
 				running = False
-			# Esto es un evento al cambiar la resolucion de la pantalla, lo demas evita que la pantalla sea muy pequena o muy grande
-			
+
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				if event.button == 1:
 					if iniciarMenu:
