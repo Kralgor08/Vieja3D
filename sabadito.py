@@ -665,11 +665,7 @@ def imprimirTablerosRestantes(verde_feo,screen,largoTab,altoTab,X,Y,oscuro,Dimen
 		p += 25
 		q += 30
 	
-
-
 #FUNCION PARA DIBUJAR TEXTO 
-
-
 def entradatexto(screen):
 	font = pygame.font.SysFont("OpenSansSemibold", 32)
 	screen.fill([4, 126, 126])
@@ -716,7 +712,35 @@ def salir(font, screen):
 	screen.fill([4, 126, 126])
 	dibujarTexto("Gracias por jugar!", font, screen, 260, 260, (255,255,255))
 
-		
+
+def rancc(screen):
+	font = pygame.font.SysFont("OpenSansSemibold", 32)
+	screen.fill([4, 126, 126])
+	dibujarTablero(screen,300,500, 800, 600,50,30,(0,0,0,100),1)
+	dibujarTexto("Rankings", font, screen, 90, 30, (255,255,255))
+	volveralmenu = dibujarRectanguloWin95(screen, 400, 100, 300, 50, 2, 1)
+	salir2  = dibujarRectanguloWin95(screen, 400, 400, 300, 50, 2, 1)
+	dibujarTexto("Volver al menu", font, screen, 430, 100,(20,20,20))
+	dibujarTexto("Salir", font, screen, 500, 400,(20,20,20))
+	f=open("nombrepuntaje.txt","r+")
+	s=f.readlines()
+	for i in range(len(s)):
+		dibujarTexto(s[i], font, screen, 90, 100+40*i, (255,255,255))
+
+	return volveralmenu, salir2
+
+def guardarpuntajes(jugador1,jugador2):
+	f=open("nombrepuntaje.txt","r+")
+	s=f.readlines()
+	if jugador1.puntos<jugador2.puntos:
+		f.writelines(str(jugador2.nombre)+"   "+str(jugador2.puntos)+'\n')
+	elif jugador2.puntos<jugador1.puntos:
+		f.writelines(str(jugador1.nombre)+"   "+str(jugador1.puntos)+'\n')
+	elif jugador1.puntos==jugador2.puntos:
+		f.writelines(str(jugador2.nombre)+"   "+str(jugador1.nombre)+str(jugador2.puntos)+"Empate"+'\n')
+	f.close()
+
+
 def main():
 	## Pygame 
 	#Inicializacion
@@ -728,6 +752,7 @@ def main():
 	altoTab = int(9.5*Y//10)
 	iniciarMenu = True
 	empezarJuego = False
+	iniciarRank=False
 	iniciarMenu = True
 	jugador1, jugador2 = jugadores()
 	iniciarNombres=False
@@ -769,8 +794,7 @@ def main():
 
 			if event.type == pygame.QUIT:
 				running = False
-			# Esto es un evento al cambiar la resolucion de la pantalla, lo demas evita que la pantalla sea muy pequena o muy grande
-			
+
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				if event.button == 1:
 					if iniciarMenu:
@@ -784,6 +808,7 @@ def main():
 						elif enRankings:
 							click(posCuadros, posRectWinY + 80 + 25 + 8, 120, 25,"Rankings",posCuadros + 30,posRectWinY + 118,negro,gris_claro,winlogo,screen,Y)
 							iniciarMenu = False
+							iniciarRank= True
 						elif enSalir:
 							click(posCuadros, posRectWinY + 80 + 75 + 81, 120, 25,"Salir", posCuadros + 40,posRectWinY + 80 + 75 + 86,negro,gris_claro,winlogo,screen,Y)
 							iniciarMenu = False
@@ -792,6 +817,16 @@ def main():
 						elif enExtras:
 							click(2, Y - 23, 70, 20,"Extras",23,Y - 18,negro,gris_claro,winlogo,screen,Y)   
 							iniciarMenu = False
+					if iniciarRank:
+						volveralmenu, salir2 = rancc(screen)
+						if volveralmenu.collidepoint(pygame.mouse.get_pos()):
+							iniciarMenu = True
+							iniciarRank = False
+						elif salir2.collidepoint(pygame.mouse.get_pos()):
+							iniciarMenu = False
+							running = False
+							iniciarRank = False
+							salir(font, screen)
 
 					if iniciarNombres:
 						if box1.collidepoint(pygame.mouse.get_pos()):
@@ -820,13 +855,17 @@ def main():
 							dibujarTexto(jugador1.nombre, font, screen,105+(251+233)//2-p, 105, negro)
 							dibujarTexto(jugador2.nombre, font, screen, 105+(251+233)//2-q, 208, negro)
 							dibujarTexto(dimensionString, font, screen, 125+(251+233)//2-r, 445, negro)
-							#guardarpuntajes()
+							guardarpuntajes(jugador1,jugador2)
+							jugador1.puntos=0
+							jugador2.puntos=0
+							jugador1.lineas=0
+							jugador2.lineas=0
 
 						elif rectno.collidepoint(pygame.mouse.get_pos()):
 							aResultado = False
 							salir(font, screen)
 							running = False
-							#guardarpuntajes()
+							guardarpuntajes(jugador1,jugador2)
 
 					if runningJuego and len(tableros) > 0:
 						
@@ -937,7 +976,7 @@ def main():
 							casillas = dibujarCasillas(Dimension,largoTab,altoTab,numeroDeTabs, screen)
 							dibujarTexto(jugadorActual.nombre + ", es tu turno", font, screen, 240-10*len(jugadorActual.nombre),60,(255,255,255))
 							letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
-		
+
 		if empezarJuego:
 			
 			OtraPartida = True
