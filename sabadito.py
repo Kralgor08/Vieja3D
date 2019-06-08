@@ -1,17 +1,10 @@
 """
-	Leonardo Duarte, Adelina Figueira
+Universidad Simon Bolivar
 
-	   [ [[0, 0, 0],
-		  [0, 0, 0],
-		  [0, 0, 0]],
-
-		 [[0, 0, 0],
-		  [0, 0, 0],
-		  [0, 0, 0]],
+Autores:
+	Adelina Figueira 15-10484
+	Leonardo Duarte 17-10169
 	
-		 [[0, 0, 0],
-		  [0, 0, 0],
-		  [0, 0, 0]] ]
 
 """
 
@@ -19,24 +12,22 @@ import random
 import pygame
 import math
 
+
+# Clase que almacena los datos de cada jugador
 class Jugador():
 	nombre = ""
 	turno = 0
 	lineas = 0
 	puntos = 0
 
-"""
-	Define las variables a utilizar en las demas funciones:
-	la dimension del supertablero, el tablero (lleno de ceros)
-	y la variable utilizada para empezar otra partida.
-"""
+
+# Inicializa el super-tablero 
 def variables(DimensionTab):
-	# El try y except se utilizan para asegurarse de que se introduzca un numero
-	# valido en la dimension del supertablero
-	
 	T = [[[0 for casilla in range(0, DimensionTab)] for fila in range(0, DimensionTab)] for tablero in range(0, DimensionTab)]
 	return T
 	
+
+# Inicializa los jugadores	
 def jugadores():
 	jugador1 = Jugador()
 	jugador2 = Jugador()
@@ -49,12 +40,16 @@ def jugadores():
 
 	return jugador1, jugador2
 
+
+# Funcion que dibuja un string en pantalla
 def dibujarTexto(texto, font, superficie, x, y, color):
 	objetotexto = font.render(texto, 1, color)
 	rectangulotexto = objetotexto.get_rect()
 	rectangulotexto.topleft = (x, y)
 	superficie.blit(objetotexto, rectangulotexto)
 
+
+# Funcion que dibuja los textos y tableros secundarios de la pantalla de juego
 def letrajuego(screen,jugador1,jugador2,jugador11,jugador22,jugador111,jugador222,Dimension,X,Y):
 	font=pygame.font.SysFont("OpenSansSemibold", 28)
 	fuente=pygame.font.SysFont("OpenSansSemibold", 20)
@@ -71,11 +66,11 @@ def letrajuego(screen,jugador1,jugador2,jugador11,jugador22,jugador111,jugador22
 	dibujarTexto(jugador22, font, screen, 620, 360, (255, 200, 255))
 	dibujarTexto(jugador222, fuente, screen, 620, 430, (255, 200, 255))
 	
-	#dibujarTexto("Aqui salen los errores", fuente, screen, 620, 400, (255, 255, 255))
 	dibujarTexto("Utiliza las teclas de direccion para moverte entre tableros", fuente, screen, 27, 525, (255, 255, 255))
 	dibujarTexto("Haz click en una casilla para seleccionarla", fuente, screen, 27, 550, (255, 255, 255))
 
 
+# Funcion para obtener la Dimension a utilizar por el usuario
 def dimension(dim, screen, negro, verde_feo):
 	try:
 		DimensionTab = dim
@@ -87,11 +82,12 @@ def dimension(dim, screen, negro, verde_feo):
 		font = pygame.font.Font(None, 32)
 		dibujarTexto("Debes introducir un numero entre 1 y 11.",font,screen, 50,520,negro)
 		dibujarTexto("Vuelve a intentarlo.",font,screen, 50,553,negro)
-		# Para volver a introducir la dimensions
+		# Para volver a introducir la dimension
 		return -1
 
+
 # Verifica si la jugada es valida:
-# si un jugador escoge una posicion donde existe otro numero distinto de cero (numero por defecto) la jugada no es valida.
+# Si un jugador escoge una posicion donde existe otro numero distinto de cero (numero por defecto) la jugada no es valida.
 def esValida(superTablero, tablero, fila, casilla):
 	casillaEscogida = superTablero[tablero][fila][casilla]
 
@@ -99,6 +95,7 @@ def esValida(superTablero, tablero, fila, casilla):
 		return True
 	elif casillaEscogida == 1 or casillaEscogida == 2:
 		return False
+
 
 # Reemplaza la casilla escogida con el identificador del jugador
 def reflejarEnTablero(superTablero, tablero, fila, casilla, turno):
@@ -144,7 +141,7 @@ def lineaHorizontalHecha(superTablero, tablero, fila):
 	
 	return verificarLista(filaActual)
 
-
+# Verifica si se hizo una linea vertical en la fila actual
 def lineaVerticalHecha(superTablero, tablero, fila, casilla):
 	
 	"""
@@ -170,6 +167,7 @@ def lineaVerticalHecha(superTablero, tablero, fila, casilla):
 	# Luego, se verifica si hay una linea en esos arreglos de columnas.
 	return verificarListaCompleja(columnasEnTablero, columnasEnZ)
 
+
 # Funcion para ahorrar espacio al determinar si hay una linea diagonal en z
 def diagonalesEnZ(superTablero, lista, argumento):
 	for tableros in range(len(superTablero)):
@@ -181,6 +179,7 @@ def diagonalesEnZ(superTablero, lista, argumento):
 	return lista
 
 
+# Verifica si se hizo una linea diagonal en el tablero actual
 def lineaDiagonalHecha(superTablero, tablero,filat,casillat):
 	"""
 		Coloca los elementos de la diagonal principal del tablero actual en un
@@ -201,69 +200,9 @@ def lineaDiagonalHecha(superTablero, tablero,filat,casillat):
 				if casilla == len(superTablero)-1 - fila:
 					diagonalSecundariaEnTablero.append(superTablero[tablero][fila][casilla])
 
-	
-	"""
-		El supertablero posee un numero fijo de esquinas, 6, y cada una de las
-		esquinas puede formar una diagonal con 3 otras esquinas (si se cuentan las que estan 
-		sobre el tablero serian 18).
-		El total de diagonales unicas es 12, sin contar las del tablero. Los elementos de estas
-		diagonales se pueden obtener cambiando algunos argumentos if.  
-	"""
-	"""
-	diagonalEnZ1 = []
-	if tablero == filat == casillat:
-		diagonalEnZ1 = diagonalesEnZ(superTablero, diagonalEnZ1, tablero == fila == casilla)
-
-	diagonalEnZ2 = []
-	if filat == 0 and tablero == casillat:
-		diagonalEnZ2 = diagonalesEnZ(superTablero, diagonalEnZ2, fila == 0 and tablero == casilla)
-
-	diagonalEnZ3 = []
-	if casillat == 0 and tablero == filat:
-		diagonalEnZ3 = diagonalesEnZ(superTablero, diagonalEnZ3, casilla == 0 and tablero == fila)
-
-	diagonalEnZ4 = []
-	if filat == len(superTablero) -1 - tablero and casillat == len(superTablero) -1 - tablero:
-		diagonalEnZ4 = diagonalesEnZ(superTablero, diagonalEnZ4, fila == len(superTablero) -1 - tablero and casilla == len(superTablero) -1 - tablero)
-	
-	diagonalEnZ5 = []
-	if filat == 0 and casillat == len(superTablero)-1 - tablero:
-		diagonalEnZ5 = diagonalesEnZ(superTablero, diagonalEnZ5, fila == 0 and casilla == len(superTablero)-1 - tablero)
-	
-	diagonalEnZ6 = []
-	if casillat == 0 and filat == len(superTablero) -1 -tablero:
-		
-		diagonalEnZ5 = diagonalesEnZ(superTablero, diagonalEnZ6, casilla == 0 and fila == len(superTablero) -1 -tablero)
-	
-	diagonalEnZ7 = []
-	if casillat == len(superTablero)-1 and tablero == len(superTablero)-1 -filat:
-		
-		diagonalEnZ7 = diagonalesEnZ(superTablero, diagonalEnZ7, casilla == len(superTablero)-1 and tablero == len(superTablero)-1 -fila)
-	
-	diagonalEnZ8 = []
-	if filat == len(superTablero)-1 and tablero == len(superTablero)-1 - casillat:
-		diagonalEnZ8 = diagonalesEnZ(superTablero, diagonalEnZ8, fila == len(superTablero)-1 and tablero == len(superTablero)-1 - casilla)
-	
-	diagonalEnZ9 = []
-	if casillat == len(superTablero)-1 and tablero == filat:
-		diagonalEnZ9 = diagonalesEnZ(superTablero, diagonalEnZ9, casilla == len(superTablero)-1 and tablero == fila)
-	
-	diagonalEnZ10 = []
-	if filat == len(superTablero)-1 and tablero == casillat:
-		diagonalEnZ10 = diagonalesEnZ(superTablero, diagonalEnZ10, fila == len(superTablero)-1 and tablero == casilla)
-	
-	diagonalEnZ11 = []
-	if filat == len(superTablero)-1 -tablero and tablero == casillat:
-		diagonalEnZ11 = diagonalesEnZ(superTablero, diagonalEnZ11, fila == len(superTablero)-1 -tablero and tablero == casilla)
-	
-	diagonalEnZ12 = []
-	if filat == tablero and filat == len(superTablero)-1 -casillat:
-		diagonalEnZ12 = diagonalesEnZ(superTablero, diagonalEnZ12, fila == tablero and fila == len(superTablero)-1 -casilla)
-	"""
 	lineas = verificarListaCompleja(diagonalEnTablero, diagonalSecundariaEnTablero)
 
 	return lineas
-
 
 
 # Revisa cuantas lineas en total se han hecho y devuelve ese numero
@@ -281,11 +220,13 @@ def lineaHecha(superTablero, tablero, fila, casilla, turno,jugadorActual):
 
 	return lineasTotales
 
+
 # Anade lineas al jugador actual si tuvo alguna
 def anadirLinea(lineasHechas, jugadorActual):
 	jugadorActual.lineas = lineasHechas
 
 	return jugadorActual.lineas
+
 
 # Anade puntos al jugador actual si tuvo lineas hechas.
 # El puntaje aumenta cuando se hace una linea, pero aumenta
@@ -295,11 +236,13 @@ def anadirPuntos(lineasHechas, jugadorActual):
 			jugadorActual.puntos += lineasHechas*1000
 	return jugadorActual.puntos
 
+
 # Elige aleatoriamente el primer jugador de la partida
 def elegirJugador():
 	turno = random.randint(1,2)
 
 	return turno
+
 
 # Alterna entre los 2 jugadores luego de una jugada valida
 def cambiarJugador(turnoJugadorActual):
@@ -314,6 +257,7 @@ def cambiarJugador(turnoJugadorActual):
 
 	return turno
 
+
 # Devuelve un error y no suma al contador del while principal,
 # por lo tanto el jugador actual no ha cumplido su turno
 def error(screen):
@@ -321,22 +265,19 @@ def error(screen):
 	dibujarTexto("La jugada no es valida", fuente, screen, 617, 240, (255, 255, 255))
 	
 
-# por definir
-#def resultado():   
-
 # Devuelve las variables iniciales a sus valores por defecto
 def jugarDeNuevo():
-	a = [-1]
-	while a[0] == -1:
-		a = variables()
-	
+	a = variables()
 	return a
+
 
 # variables necesarias para la parte grafica
 def variablesPygame():
 	X = 800
 	Y = 600
+	# Pantalla principal
 	screen = pygame.display.set_mode((X,Y))
+	# Colores
 	blanco = [251, 245, 239]
 	negro = (20,20,20)
 	verde_feo = [4, 126, 126]
@@ -344,14 +285,17 @@ def variablesPygame():
 	gris = [190, 190, 190]
 	gris_claro = [222, 222, 222]
 	gris_oscuro = [126, 126, 126]
+	# Cursor de menu
 	pygame.mouse.set_cursor(*pygame.cursors.tri_left)
 	clock = pygame.time.Clock()
+	# Imagenes
 	Pc95 = pygame.image.load("recursos/pc.png").convert_alpha()
 	iconos = pygame.image.load("recursos/iconos.png").convert()
 	winlogo = pygame.image.load("recursos/winlogo.png").convert_alpha()
 	botonx = pygame.image.load("recursos/botonx.png").convert()
 	sabiasque = pygame.image.load("recursos/sabiasque.png").convert()
 
+	# Dimensiones del rectangulo del menu
 	anchoRectWin = 580
 	altoRectWin = 400
 	posRectWinX = X/2 - anchoRectWin/2
@@ -402,6 +346,7 @@ def dibujarRectanguloWin95(superficie, posRectX, posRectY, anchoRect, altoRect, 
 	pygame.draw.line(superficie, negro, [posRectX, posRectY + altoRect], [posRectX + anchoRect, posRectY + altoRect], grosorL2)
 	pygame.draw.line(superficie, negro, [posRectX + anchoRect, posRectY + altoRect], [posRectX + anchoRect, posRectY], grosorL2)
 	return rect
+
 
 # Dibuja la superficie total del menu. La funcion crea desde el fondo hasta las lineas que sirven de sombra para los rectangulos.
 # Al crear cada objeto, se asegura que al momento de cambiar la resolucion de la ventana los objetos quedan en la misma posicion relativa,
@@ -487,16 +432,14 @@ def dibujarMenu(X,Y,screen,blanco,negro,verde_feo,azul,gris,gris_claro,gris_oscu
 	screen.blit(sabiasqueTexto1, (posRectWinX + 90,posRectWinY + 150))  
 
 
+# Dibuja los rectangulos de estilo win95 que pueden ser clickeados
 def dibujarRectInteractivos(screen, posCuadros, posRectWinY, winlogo, negro, gris,X,Y):
 
 
 	anchoRectWin = 580
-	# Longitud en Y del rectangulo central
 	altoRectWin = 400
 	posRectWinX = X/2 - anchoRectWin/2
-	# Posicion en Y del rectangulo central
 	posRectWinY = Y/2 - altoRectWin/2
-	# Posicion de los cuadrados pequenos a la izquierda del rectangulo central
 	posCuadros = posRectWinX + 20 + 410 + 15
 
 	
@@ -528,10 +471,14 @@ def dibujarRectInteractivos(screen, posCuadros, posRectWinY, winlogo, negro, gri
 
 	return [rectJ,rectR,rectS,rectE]
 
+
+# Funcion que determina si el raton esta sobre un rectangulo del menu y lo resalta
 def ratonSobre(rect,posX,posY,largo,alto,tamano,texto,bool,posXfont,posYfont,screen,winlogo, negro, gris,X,Y):
 
 	if rect.collidepoint(pygame.mouse.get_pos()):
+		# Dibuja un rectangulo negro sin relleno
 		pygame.draw.rect(screen, negro, [posX,posY,largo,alto], 1)
+		# Dibuja el texto encima
 		font = pygame.font.SysFont("{}".format("freepixelregular"),tamano, bool).render("{}".format(texto),False,negro,gris)
 		screen.blit(winlogo, (4,Y - 21))
 		screen.blit(font,(posXfont,posYfont))
@@ -541,15 +488,20 @@ def ratonSobre(rect,posX,posY,largo,alto,tamano,texto,bool,posXfont,posYfont,scr
 	elif not rect.collidepoint(pygame.mouse.get_pos()):
 		return False
 
+
+# Funcion que invierte los colores del rectangulo al presionarlo
 def click(posX, posY, largo, alto,texto,posXfont,posYfont,negro,gris_claro,winlogo,screen,Y,tamano=15,bool=False):
+	# Dibuja un rectangulo inverso encima
 	dibujarRectanguloWin95(screen, posX, posY, largo, alto, 1, 1, True)
+	# Dibuja el texto correspondiente
 	font = pygame.font.SysFont("{}".format("freepixelregular"),tamano, bool).render("{}".format(texto),False,negro,gris_claro)
 	screen.blit(winlogo, (4,Y - 21))
 	screen.blit(font,(posXfont,posYfont))
 
 
+# Funcion que dibuja un rectangulo con bordes redondeados de tamaño variable
 def dibujarTablero(superficie, largoTab, altoTab, X, Y,posX,posY, color,Dimension,booleano=False):
-
+	# Dibuja una superficie que permite transparencias
 	rectTablero = pygame.Surface((largoTab, altoTab)).convert_alpha()
 	tablero_centro = rectTablero.get_rect()
 	negro = (0,0,0,255)
@@ -558,7 +510,7 @@ def dibujarTablero(superficie, largoTab, altoTab, X, Y,posX,posY, color,Dimensio
 	q = 0
 	r = 0
 	s = 0
-
+	# Dibuja los rectangulos y circulos que lo conforman
 	pygame.draw.rect(rectTablero, color, [0,30, 100, altoTab-60])
 	pygame.draw.circle(rectTablero,color,(30,altoTab-30),30)
 	pygame.draw.rect(rectTablero, color, [30,0, largoTab-60, 100])
@@ -568,6 +520,8 @@ def dibujarTablero(superficie, largoTab, altoTab, X, Y,posX,posY, color,Dimensio
 	pygame.draw.rect(rectTablero, color, [30,altoTab-100, largoTab-60, 100])
 	pygame.draw.circle(rectTablero,color,(largoTab-30,altoTab-30),30)
 	pygame.draw.rect(rectTablero,color,[100,100, largoTab-200, altoTab-200])
+
+	# Si es un tablero de juego, dibuja las lineas sobre el tablero
 	if booleano:
 		
 		for nums in range(Dimension-1):
@@ -575,18 +529,15 @@ def dibujarTablero(superficie, largoTab, altoTab, X, Y,posX,posY, color,Dimensio
 			pygame.draw.line(rectTablero,negro,[0,(altoTab//Dimension)+q],[largoTab,(altoTab//Dimension)+q],2)
 			p += largoTab//Dimension
 			q += altoTab//Dimension
-		"""
-		for filas in range(0, 348, largoTab//Dimension):
-			for columnas in range(0, 344, altoTab//Dimension):
-				cuadros=pygame.draw.rect(rectTablero, negro, ((filas, columnas), (largoTab, altoTab)), 2)
-		"""
 
 	superficie.blit(rectTablero,(posX, posY))
 
 	return rectTablero
 
 
+# Funcion que dibuja cada tablero jugable y devuelve cada casilla en ellos
 def dibujarCositos(verde_feo,screen,X,Y,oscuro,Dimension,numeroDeTabs):
+	# Dimensiones del tablero
 	largoTab = int(2.9*X//4)
 	altoTab = int(9.5*Y//10)
 	diagTab = math.sqrt(largoTab*largoTab + altoTab*altoTab)
@@ -601,7 +552,7 @@ def dibujarCositos(verde_feo,screen,X,Y,oscuro,Dimension,numeroDeTabs):
 	s = 0
 
 
-	
+	# Por cada tablero en el numero de tableros especificado dibuja un tablero y lo coloca en la lista tableros, al igual que su posicion
 	for nums in range(numeroDeTabs):
 		tableros.append(dibujarTablero(screen, 348, 344, X, Y, 15 + largoTab//2-(215+q)+p, 15 + altoTab//2-(117-q)-p,colores[nums],Dimension,True))
 		pos.append([15 + largoTab//2-(215+q)+p,15 + altoTab//2-(117-q)-p])
@@ -611,12 +562,16 @@ def dibujarCositos(verde_feo,screen,X,Y,oscuro,Dimension,numeroDeTabs):
 	casillas = dibujarCasillas(Dimension,largoTab,altoTab,numeroDeTabs, screen)
 	return tableros, casillas, pos
 
+
+# Funcion que determina si el mouse esta sobre una casilla
 def ratonSobreCasillas(rect):
 	if rect.collidepoint(pygame.mouse.get_pos()):
 		return True
 
 
+# Funcion que dibuja las casillas en un tablero
 def dibujarCasillas(Dimension,largoTab,altoTab,numeroDeTabs,screen):
+	# Dibuja una superficie que permite transparencias
 	superficie = pygame.Surface((348*2, 344*2)).convert_alpha()
 	casillas = []
 	filas = []
@@ -625,6 +580,7 @@ def dibujarCasillas(Dimension,largoTab,altoTab,numeroDeTabs,screen):
 	p = 0 + 25*numeroDeTabs
 	q = -56+ 30*numeroDeTabs
 
+	# Por cada casilla dibuja una casilla y la coloca en la lista casillas
 	for columna in range(Dimension):
 		r = 0
 		filas = []
@@ -636,24 +592,33 @@ def dibujarCasillas(Dimension,largoTab,altoTab,numeroDeTabs,screen):
 
 	return casillas
 
+
+# Funcion que dibuja la ficha en la posicion valida
 def dibujarFicha(superficie, rect, screen, posX,posY,mult,turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs,fila,casilla):
+	# Dibuja los tableros que estan detras del actual
 	dibujarCositos(verde_feo,screen,X,Y,oscuro,Dimension,numeroDeTabs-1)
+
+	# Carga la imagen a dibujar
 	if turno == 1:
 		imagen = pygame.image.load("recursos/X{}.png".format(Dimension))
 
 	elif turno == 2:
 		imagen = pygame.image.load("recursos/O{}.png".format(Dimension))
-			
+	
+	# Dibuja la imagen		
 	pos = superficie.get_rect()
 	q = 6*mult
 	p = 5*mult
-	superficie.blit(imagen,(11//Dimension + (348//Dimension)*casilla,11//Dimension + (344//Dimension)*fila))
+	superficie.blit(imagen,(26//Dimension + (348//Dimension)*casilla,21//Dimension + (344//Dimension)*fila))
 	screen.blit(superficie,(posX+5*p-5*q,posY-5*p+5*q))
 	
 	return superficie
 
+
+# Funcion que dibuja los tableros que sobran al cambiar de tablero
 def imprimirTablerosRestantes(verde_feo,screen,largoTab,altoTab,X,Y,oscuro,Dimension,lista):
 	screen.fill(verde_feo)
+	# Tablero del fondo
 	rectTablero = dibujarTablero(screen, largoTab, altoTab, X, Y,15,15, oscuro,Dimension)
 	p = 0
 	q = -56
@@ -662,8 +627,9 @@ def imprimirTablerosRestantes(verde_feo,screen,largoTab,altoTab,X,Y,oscuro,Dimen
 		screen.blit(tablero, (15 + largoTab//2-(215+q)+p, 15 + altoTab//2-(117-q)-p))
 		p += 25
 		q += 30
+
 	
-#FUNCION PARA DIBUJAR TEXTO 
+# Funcion que dibuja el texto del menu donde se ingresan los nombres y la dimension
 def entradatexto(screen):
 	font = pygame.font.SysFont("OpenSansSemibold", 32)
 	screen.fill([4, 126, 126])
@@ -678,12 +644,14 @@ def entradatexto(screen):
 	dimension = dibujarRectanguloWin95(screen, 234, 450, 233, 40, 2, 1)
 	return box1, box2, dimension
 
-def resultado(jugador1, jugador2, font, screen,Dimension):
-	#if all(((superTablero[tablero][filas][columnas] for tablero in range(len(casilla)))for filas in range(len(casillas)))for columnas in range(len(casilla))):
-	screen.fill((4,126,126))
 
+# Funcion que dibuja el menu final del resultado
+def resultado(jugador1, jugador2, font, screen,Dimension):
+	screen.fill((4,126,126))
+	# Rectangulo de fondo
 	dibujarTablero(screen,700,500,800,600,50,50,(0,0,0,100),Dimension)
 
+	# Dibuja el ganador
 	if jugador1.lineas>jugador2.lineas:
 		dibujarTexto(str(jugador1.nombre)+", has ganado", font, screen, 268-10*len(jugador1.nombre), 70, (255, 255, 255))
 		dibujarTexto("con "+str(jugador1.lineas)+" lineas", font, screen, 275, 123, (255, 255, 255))
@@ -693,11 +661,13 @@ def resultado(jugador1, jugador2, font, screen,Dimension):
 	elif jugador2.lineas==jugador1.lineas:
 		dibujarTexto("Empatados", font, screen, 270, 50, (255, 255, 255))
 
+	# Dibuja los puntajes
 	dibujarTexto("Puntaje Total: ", font, screen, 60,186,(255,255,255))
 	dibujarTexto(jugador1.nombre + ": " + str(jugador1.puntos), font, screen, 60,249,(255,255,255))
 	dibujarTexto(jugador2.nombre + ": " + str(jugador2.puntos), font, screen, 60,302,(255,255,255))
 
 	dibujarTexto("Quieres jugar otra partida?", font, screen, 100, 400,(255,255,255))
+	# Rectangulos de salir o no
 	rectsi = dibujarRectanguloWin95(screen, 150, 480, 200, 50, 2, 1)
 	rectno  = dibujarRectanguloWin95(screen, 450, 480, 200, 50, 2, 1)
 	dibujarTexto("Si", font, screen, 230, 473,(20,20,20))
@@ -706,31 +676,40 @@ def resultado(jugador1, jugador2, font, screen,Dimension):
 	return rectsi, rectno
 
 
+# Funcion que dibuja la pantalla final antes de salir del juego
 def salir(font, screen):
 	screen.fill([4, 126, 126])
 	dibujarTexto("Gracias por jugar!", font, screen, 260, 260, (255,255,255))
 
-
+# Funcion que dibuja el menu de los rankings
 def rancc(screen):
 	font = pygame.font.SysFont("OpenSansSemibold", 32)
 	screen.fill([4, 126, 126])
 	dibujarTablero(screen,300,500, 800, 600,50,30,(0,0,0,100),1)
 	dibujarTexto("Rankings", font, screen, 90, 30, (255,255,255))
+	
+	# Botones
 	volveralmenu = dibujarRectanguloWin95(screen, 400, 100, 300, 50, 2, 1)
 	salir2  = dibujarRectanguloWin95(screen, 400, 400, 300, 50, 2, 1)
+
 	dibujarTexto("Volver al menu", font, screen, 430, 100,(20,20,20))
 	dibujarTexto("Salir", font, screen, 500, 400,(20,20,20))
-	f=open("nombrepuntaje.txt","r+")
-	s=f.readlines()
+
+	# Lee el archivo con los puntajes y los escribe
+	f = open("nombrepuntaje.txt","r+")
+	s = f.readlines()
 	for i in range(len(s)):
 		if i<10:
 			dibujarTexto(s[i], font, screen, 90, 100+40*i, (255,255,255))
 
 	return volveralmenu, salir2
 
+
+# Funcion que guarda los puntajes
 def guardarpuntajes(jugador1,jugador2):
-	f=open("nombrepuntaje.txt","r+")
-	s=f.readlines()
+
+	f = open("nombrepuntaje.txt","r+")
+	s = f.readlines()
 	if jugador1.puntos<jugador2.puntos:
 		f.writelines(str(jugador2.nombre)+"   "+str(jugador2.puntos)+'\n')
 	elif jugador2.puntos<jugador1.puntos:
@@ -770,11 +749,11 @@ def main():
 	aResultado = False
 	imagen = pygame.image.load("recursos/pc.png")
 
-
-	###############################################
 	margenLeft=133
 	margenSup=145
 	lado = 87
+	###############################################
+	
 
 
 	while running:
@@ -782,42 +761,51 @@ def main():
 		# Limita al while para que solo haga 60 ciclos en 1 segundo
 		clock.tick(60)
 		if iniciarMenu:
+			# Dibuja el menu
 			dibujarMenu(X,Y,screen,blanco,negro,verde_feo,azul,gris,gris_claro,gris_oscuro,Pc95,iconos,winlogo,botonx,sabiasque)
+			# Inicia los botones del menu
 			rectJugar,rectRankings,rectSalir,rectExtras = dibujarRectInteractivos(screen, posCuadros, posRectWinY, winlogo, negro, gris,X,Y)
 			enJugar = ratonSobre(rectJugar,posCuadros, posRectWinY + 80, 120, 25, 15,"Jugar", False,posCuadros + 40,posRectWinY + 85, screen, winlogo, negro, gris,X,Y)
 			enRankings = ratonSobre(rectRankings,posCuadros, posRectWinY + 80 + 25 + 8, 120, 25, 15,"Rankings", False,posCuadros + 30,posRectWinY + 118, screen, winlogo, negro, gris,X,Y)
 			enSalir = ratonSobre(rectSalir,posCuadros, posRectWinY + 80 + 75 + 81, 120, 25,15,"Salir", False, posCuadros + 40,posRectWinY + 80 + 75 + 86, screen, winlogo, negro, gris,X,Y)
 			enExtras = ratonSobre(rectExtras,2, Y - 23, 70, 20, 13,"Extras", True,23,Y - 18, screen, winlogo, negro, gris,X,Y)
 
-
+		# Ciclo que revisa cada evento que obtiene pygame
 		for event in pygame.event.get():
-
+			# Boton de salir de la ventana
 			if event.type == pygame.QUIT:
 				running = False
-
+			# Evento de presionar un boton del mouse
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				if event.button == 1:
+					# Si esta en el menu
 					if iniciarMenu:
+						# Depende en que lugar se dio click
 						if enJugar:
+							# Empieza la inicializacion de los nombres y la dimension
 							click(posCuadros, posRectWinY + 80, 120, 25,"Jugar",posCuadros + 40,posRectWinY + 85,negro,gris_claro,winlogo,screen,Y)
 							iniciarNombres = True
 							box1, box2, cuadroDimension = entradatexto(screen)
 							iniciarMenu = False
 							empezarJuego = False
-					
 						elif enRankings:
+							# Empieza la pantalla de rankings
 							click(posCuadros, posRectWinY + 80 + 25 + 8, 120, 25,"Rankings",posCuadros + 30,posRectWinY + 118,negro,gris_claro,winlogo,screen,Y)
 							iniciarMenu = False
 							iniciarRank= True
 						elif enSalir:
+							# Sale del programa
 							click(posCuadros, posRectWinY + 80 + 75 + 81, 120, 25,"Salir", posCuadros + 40,posRectWinY + 80 + 75 + 86,negro,gris_claro,winlogo,screen,Y)
 							iniciarMenu = False
 							running = False
 							salir(font, screen)
 						elif enExtras:
+							# Empieza la pantalla de extras
 							click(2, Y - 23, 70, 20,"Extras",23,Y - 18,negro,gris_claro,winlogo,screen,Y)   
 							iniciarMenu = False
 					if iniciarRank:
+						# Si esta en rankings
+						# Iniciar el menu de rankings
 						volveralmenu, salir2 = rancc(screen)
 						if volveralmenu.collidepoint(pygame.mouse.get_pos()):
 							iniciarMenu = True
@@ -829,6 +817,7 @@ def main():
 							salir(font, screen)
 
 					if iniciarNombres:
+						# Si esta en la pantalla de iniciar los nombres 
 						if box1.collidepoint(pygame.mouse.get_pos()):
 							enBox1 = True
 						if not box1.collidepoint(pygame.mouse.get_pos()):
@@ -843,6 +832,7 @@ def main():
 							enCuadroDim = False
 
 					if aResultado:
+						# Si esta en la pantalla de resultado
 						if rectsi.collidepoint(pygame.mouse.get_pos()):
 							iniciarNombres = True
 							box1, box2, cuadroDimension = entradatexto(screen)
@@ -868,31 +858,35 @@ def main():
 							guardarpuntajes(jugador1,jugador2)
 
 					if runningJuego and len(tableros) > 0:
-						
+						# Si esta en la pantalla de juego
 						if 0 < espacioLibre <= Dimension*Dimension*Dimension:
+							# Si hay espacios libres en el tablero
 							for fil in range(len(casillas)):
 								for casilla in range(len(casillas[fil])): 
 									if ratonSobreCasillas(casillas[fil][casilla]):
 										z , y, x = numTableroActual, fil, casilla
+										# Si es valida
 										if esValida(superTablero, z, y, x):
+											# Se refleja en el tablero de texto y en el grafico
 											superTablero = reflejarEnTablero(superTablero,z,y,x,jugadorActual.turno)
 											tableros[numTableroActual] = dibujarFicha(tableroActual,casillas[fil][casilla],screen,pos[0][0],pos[0][1],numTableroActual,jugadorActual.turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs,y,x)
 											lineasHechas = lineaHecha(superTablero, z,y,x,jugadorActual.turno,jugadorActual)
 											letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
+											# Si se hizo una linea
 											if lineasHechas > 0:
 												jugadorActual.puntos = anadirPuntos(lineasHechas, jugadorActual)
 												jugadorActual.lineas = anadirLinea(lineasHechas, jugadorActual)
 												letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
 											lineasHechas = 0
 											espacioLibre += -1
-
+											# Si no quedan mas espacios libres
 											if espacioLibre == 0:
 												runningJuego = False
 												aResultado = True
 												font2 = pygame.font.SysFont("OpenSansSemibold", 45)
 												pygame.mouse.set_cursor(*pygame.cursors.tri_left)
 												rectsi, rectno = resultado(jugador1, jugador2, font2, screen,Dimension)
-
+											# Si quedan espacios libres
 											elif espacioLibre > 0:
 												if cambiarJugador(jugadorActual.turno) == 1:
 													jugadorActual = jugador1
@@ -900,15 +894,18 @@ def main():
 												elif cambiarJugador(jugadorActual.turno) == 2:
 													jugadorActual = jugador2
 													letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
+												# Dibuja el turno del jugador actual
 												dibujarTexto(jugadorActual.nombre + ", es tu turno", font, screen, 240-10*len(jugadorActual.nombre),60,(255,255,255))
-
+										# Si no es valida se vuelve a realizar la vuelta
 										elif not esValida(superTablero, z,y,x):
 											error(screen)
-										
+			# Si se presiono una tecla							
 			elif event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_DOWN:
-
+					# Cuando se presiona la flecha hacia abajo
 					if runningJuego:
+						# Cambia el tablero actual
+						# El tablero lo coloca en una lista de tableros guardados y dibuja los restantes. Cada vez que se presiona abajo se añade otro tablero hasta quedar 1
 						if len(tableros) > 1:
 							numeroDeTabs = numeroDeTabs-1
 							tablerosGuardados.append(tableros.pop(numTableroActual))
@@ -919,12 +916,12 @@ def main():
 							dibujarTexto(jugadorActual.nombre + ", es tu turno", font, screen, 240-10*len(jugadorActual.nombre),60,(255,255,255))
 							letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
 
-
+				# Si esta en el menu de ingresar los nombres
 				if iniciarNombres:
 					p = 8*len(jugador1.nombre)
 					q = 8*len(jugador2.nombre)
 					r = 8*len(dimensionString)
-					
+					# Si la tecla es enter y se dio click en el cuadro de dimensiones
 					if event.key == pygame.K_RETURN and enCuadroDim:
 						Dimension = dimension(int(dimensionString), screen, negro, verde_feo)
 						if Dimension == -1:
@@ -933,40 +930,55 @@ def main():
 						elif Dimension != -1:
 							empezarJuego = True
 							iniciarNombres = False
-
+					# Si la tecla es borrar y se dio click en el cuadro de jugador 1
 					elif event.key == pygame.K_BACKSPACE and enBox1:
+						# Eliminar el ultimo caracter
 						jugador1.nombre=jugador1.nombre[:-1]
+						# Dibujar el rectangulo otra vez
 						dibujarRectanguloWin95(screen, 234, 110, 233, 40, 2, 1)
 						dibujarTexto(jugador1.nombre, font, screen,105+(251+233)//2-p, 105, negro)
 
+					# Si la tecla es borrar y se dio click en el cuadro de jugador 2
 					elif event.key == pygame.K_BACKSPACE and enBox2:
+						# Eliminar el ultimo caracter
 						jugador2.nombre=jugador2.nombre[:-1]
+						# Dibujar el rectangulo otra vez
 						dibujarRectanguloWin95(screen, 234, 212, 233, 40, 2, 1)
 						dibujarTexto(jugador2.nombre, font, screen, 105+(251+233)//2-q, 208, negro)
 
+					# Si la tecla es borrar y se dio click en el cuadro de dimensiones
 					elif event.key == pygame.K_BACKSPACE and enCuadroDim:
+						# Eliminar el ultimo caracter
 						dimensionString=dimensionString[:-1]
+						# Dibujar el rectangulo otra vez
 						dibujarRectanguloWin95(screen, 234, 450, 233, 40, 2, 1)
 						dibujarTexto(dimensionString, font, screen, 125+(251+233)//2-r, 445, negro)
 
+					# Si el nombre tiene menos de 10 caracteres y se dio click en el cuadro de jugador 1
 					elif len(jugador1.nombre) < 10 and enBox1:
+						# Se escribe la tecla presionada
 						jugador1.nombre+=event.unicode
 						dibujarRectanguloWin95(screen, 234, 110, 233, 40, 2, 1)
 						dibujarTexto(jugador1.nombre, font, screen, 95+(251+233)//2-p, 105, negro)
 
+					# Si el nombre tiene menos de 10 caracteres y se dio click en el cuadro de jugador 2
 					elif len(jugador2.nombre) < 10 and enBox2:
+						# Se escribe la tecla presionada
 						jugador2.nombre+=event.unicode
 						dibujarRectanguloWin95(screen, 234, 212, 233, 40, 2, 1)
 						dibujarTexto(jugador2.nombre, font, screen, 95+(251+233)//2-q, 208, negro)
 
+					# Si el nombre tiene menos de 10 caracteres y se dio click en el cuadro de jugador 1
 					elif len(dimensionString) < 2 and enCuadroDim:
+						# Se escribe la tecla presionada
 						dimensionString+=event.unicode
 						dibujarRectanguloWin95(screen, 234, 450, 233, 40, 2, 1)
 						dibujarTexto(dimensionString, font, screen, 100+(251+233)//2-r, 445, negro)
 
-
+				# Si se presiona la flecha hacia arriba
 				if event.key == pygame.K_UP:
 					if runningJuego:
+						# Se añaden los tableros guardados a la lista de tableros y se dibujan
 						if len(tablerosGuardados) > 0:
 							numeroDeTabs = numeroDeTabs+1
 							tableros.append(tablerosGuardados.pop(len(tablerosGuardados)-1))
@@ -978,7 +990,7 @@ def main():
 							letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
 
 		if empezarJuego:
-			
+			# Si el juego va a empezar, se inicializan las variables
 			OtraPartida = True
 			tablerosGuardados = []
 			superTablero = variables(Dimension)
@@ -991,8 +1003,9 @@ def main():
 			espacioLibre = Dimension*Dimension*Dimension
 			turno = elegirJugador()
 			letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
+			# Si hay espacio libre se cambia el cursor de acuerdo al jugador actual
 			if espacioLibre <= Dimension*Dimension*Dimension:
-			
+				
 				if turno == jugador1.turno:
 					jugadorActual = jugador1
 					pygame.mouse.set_cursor(*pygame.cursors.broken_x)
@@ -1004,7 +1017,7 @@ def main():
 			dibujarTexto(jugadorActual.nombre + ", es tu turno", font, screen, 240-10*len(jugadorActual.nombre),60,(255,255,255))
 		# Actualiza la superficie
 		pygame.display.flip()
-
+	# Congela el juego antes de cerrar
 	pygame.time.wait(1000)
 
 main()
