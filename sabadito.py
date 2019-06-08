@@ -636,20 +636,18 @@ def dibujarCasillas(Dimension,largoTab,altoTab,numeroDeTabs,screen):
 
 	return casillas
 
-def dibujarFicha(superficie, rect, screen, posX,posY,mult,turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs):
+def dibujarFicha(superficie, rect, screen, posX,posY,mult,turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs,fila,casilla):
 	dibujarCositos(verde_feo,screen,X,Y,oscuro,Dimension,numeroDeTabs-1)
 	if turno == 1:
-		imagen = pygame.image.load("recursos/X.png")
-		imagen = pygame.transform.scale(imagen, (300//Dimension,299//Dimension))
+		imagen = pygame.image.load("recursos/X{}.png".format(Dimension))
 
 	elif turno == 2:
-		imagen = pygame.image.load("recursos/O.png")
-		imagen = pygame.transform.scale(imagen, (300//Dimension, 299//Dimension))
-	
+		imagen = pygame.image.load("recursos/O{}.png".format(Dimension))
+			
 	pos = superficie.get_rect()
 	q = 6*mult
 	p = 5*mult
-	superficie.blit(imagen,(rect[0]-(348//Dimension)-10,rect[1]-(344//Dimension)-10))
+	superficie.blit(imagen,(11//Dimension + (348//Dimension)*casilla,11//Dimension + (344//Dimension)*fila))
 	screen.blit(superficie,(posX+5*p-5*q,posY-5*p+5*q))
 	
 	return superficie
@@ -725,7 +723,8 @@ def rancc(screen):
 	f=open("nombrepuntaje.txt","r+")
 	s=f.readlines()
 	for i in range(len(s)):
-		dibujarTexto(s[i], font, screen, 90, 100+40*i, (255,255,255))
+		if i<10:
+			dibujarTexto(s[i], font, screen, 90, 100+40*i, (255,255,255))
 
 	return volveralmenu, salir2
 
@@ -737,7 +736,8 @@ def guardarpuntajes(jugador1,jugador2):
 	elif jugador2.puntos<jugador1.puntos:
 		f.writelines(str(jugador1.nombre)+"   "+str(jugador1.puntos)+'\n')
 	elif jugador1.puntos==jugador2.puntos:
-		f.writelines(str(jugador2.nombre)+"   "+str(jugador1.nombre)+str(jugador2.puntos)+"Empate"+'\n')
+		f.writelines(str(jugador1.nombre)+"   "+str(jugador1.puntos)+'\n')
+		f.writelines(str(jugador2.nombre)+"   "+str(jugador2.puntos)+'\n')
 	f.close()
 
 
@@ -876,7 +876,7 @@ def main():
 										z , y, x = numTableroActual, fil, casilla
 										if esValida(superTablero, z, y, x):
 											superTablero = reflejarEnTablero(superTablero,z,y,x,jugadorActual.turno)
-											tableros[numTableroActual] = dibujarFicha(tableroActual,casillas[fil][casilla],screen,pos[0][0],pos[0][1],numTableroActual,jugadorActual.turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs)
+											tableros[numTableroActual] = dibujarFicha(tableroActual,casillas[fil][casilla],screen,pos[0][0],pos[0][1],numTableroActual,jugadorActual.turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs,y,x)
 											lineasHechas = lineaHecha(superTablero, z,y,x,jugadorActual.turno,jugadorActual)
 											letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
 											if lineasHechas > 0:
@@ -980,7 +980,7 @@ def main():
 		if empezarJuego:
 			
 			OtraPartida = True
-
+			tablerosGuardados = []
 			superTablero = variables(Dimension)
 			numeroDeTabs = Dimension
 			tableros, casillas, pos = dibujarCositos(verde_feo,screen,X,Y,oscuro,Dimension,Dimension)
