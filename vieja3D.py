@@ -265,12 +265,6 @@ def error(screen):
 	dibujarTexto("La jugada no es valida", fuente, screen, 617, 240, (255, 255, 255))
 	
 
-# Devuelve las variables iniciales a sus valores por defecto
-def jugarDeNuevo():
-	a = variables()
-	return a
-
-
 # variables necesarias para la parte grafica
 def variablesPygame():
 	X = 800
@@ -499,7 +493,7 @@ def click(posX, posY, largo, alto,texto,posXfont,posYfont,negro,gris_claro,winlo
 	screen.blit(font,(posXfont,posYfont))
 
 
-# Funcion que dibuja un rectangulo con bordes redondeados de tamaño variable
+# Funcion que dibuja un rectangulo con bordes redondeados de tamano variable
 def dibujarTablero(superficie, largoTab, altoTab, X, Y,posX,posY, color,Dimension,booleano=False):
 	# Dibuja una superficie que permite transparencias
 	rectTablero = pygame.Surface((largoTab, altoTab)).convert_alpha()
@@ -995,7 +989,7 @@ def main():
 					# Cuando se presiona la flecha hacia abajo
 					if runningJuego:
 						# Cambia el tablero actual
-						# El tablero lo coloca en una lista de tableros guardados y dibuja los restantes. Cada vez que se presiona abajo se añade otro tablero hasta quedar 1
+						# El tablero lo coloca en una lista de tableros guardados y dibuja los restantes. Cada vez que se presiona abajo se anade otro tablero hasta quedar 1
 						if len(tableros) > 1:
 							numeroDeTabs = numeroDeTabs-1
 							tablerosGuardados.append(tableros.pop(numTableroActual))
@@ -1068,7 +1062,7 @@ def main():
 				# Si se presiona la flecha hacia arriba
 				if event.key == pygame.K_UP:
 					if runningJuego:
-						# Se añaden los tableros guardados a la lista de tableros y se dibujan
+						# Se anaden los tableros guardados a la lista de tableros y se dibujan
 						if len(tablerosGuardados) > 0:
 							numeroDeTabs = numeroDeTabs+1
 							tableros.append(tablerosGuardados.pop(len(tablerosGuardados)-1))
