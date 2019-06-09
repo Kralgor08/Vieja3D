@@ -719,16 +719,17 @@ def guardarpuntajes(jugador1,jugador2):
 		f.writelines(str(jugador2.nombre)+"   "+str(jugador2.puntos)+'\n')
 	f.close()
 
-
+# Funcion que dibuja el menu de extras
 def dibujarExtras(screen, dimAltas, reiniPunt):
 	font = pygame.font.SysFont("OpenSansSemibold", 32)
 	screen.fill((4,126,126))
 
 	dibujarTablero(screen,640,400, 800, 600,80,80,(0,0,0,100),1)
-
+	# Rectangulos
 	VolvermenuExtras = dibujarRectanguloWin95(screen, 250,500,300,50,2,1)
 	dibujarTexto("Volver al menu", font, screen, 285, 500, (0,0,0))
-
+	# Activa la opcion de jugar con mayor facilidad en tableros de dimensiones altas
+	# Cada jugada se registra en todos los tableros
 	dibujarTexto("Poder jugar en", font, screen, 150, 100, (255,255,255))
 	dibujarTexto("dimensiones altas", font, screen, 150, 135,(255,255,255))
 	jugarEnDimA = dibujarRectanguloWin95(screen, 550,125, 100, 50, 2,1)
@@ -738,7 +739,7 @@ def dibujarExtras(screen, dimAltas, reiniPunt):
 	elif not dimAltas:
 		dibujarRectanguloWin95(screen, 550,125, 100, 50, 2,1)
 		dibujarTexto("OFF",font,screen,570,125,(0,0,0))
-
+	# Reinicia los puntajes
 	dibujarTexto("Reiniciar puntajes", font, screen, 150, 250,(255,255,255))
 	reiniciarPunt = dibujarRectanguloWin95(screen, 550, 250, 100, 50,2,1)
 	if reiniPunt:
@@ -856,19 +857,20 @@ def main():
 							running = False
 							iniciarRank = False
 							salir(font, screen)
-
+					# Si esta en el menu extras
 					if runningExtras:
+						# Si dio click en volver al menu
 						if extrasMenu.collidepoint(pygame.mouse.get_pos()):
 							iniciarMenu = True
 							runningExtras = False
 							iniciarExtras = False
-
+						# Si dio click en dimensiones altas
 						elif extrasDimA.collidepoint(pygame.mouse.get_pos()) and not dimAltas:
 							dimAltas = True
-
+						# Si dio click en dimensiones altas mientras esta encendido
 						elif extrasDimA.collidepoint(pygame.mouse.get_pos()) and dimAltas:
 							dimAltas = False
-
+						# Si dio click en reiniciar puntajes
 						elif extrasRePunt.collidepoint(pygame.mouse.get_pos()):
 							reiniPunt = True
 							open('nombrepuntaje.txt', 'w').close()
@@ -1076,7 +1078,7 @@ def main():
 							casillas = dibujarCasillas(Dimension,largoTab,altoTab,numeroDeTabs, screen)
 							dibujarTexto(jugadorActual.nombre + ", es tu turno", font, screen, 240-10*len(jugadorActual.nombre),60,(255,255,255))
 							letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
-
+		# Si se inicio el menu extras
 		if iniciarExtras:
 			extrasMenu, extrasDimA, extrasRePunt= dibujarExtras(screen, dimAltas, reiniPunt)
 			runningExtras = True
