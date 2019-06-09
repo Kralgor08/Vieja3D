@@ -720,6 +720,38 @@ def guardarpuntajes(jugador1,jugador2):
 	f.close()
 
 
+def dibujarExtras(screen, dimAltas, reiniPunt):
+	font = pygame.font.SysFont("OpenSansSemibold", 32)
+	screen.fill((4,126,126))
+
+	dibujarTablero(screen,640,400, 800, 600,80,80,(0,0,0,100),1)
+
+	VolvermenuExtras = dibujarRectanguloWin95(screen, 250,500,300,50,2,1)
+	dibujarTexto("Volver al menu", font, screen, 285, 500, (0,0,0))
+
+	dibujarTexto("Poder jugar en", font, screen, 150, 100, (255,255,255))
+	dibujarTexto("dimensiones altas", font, screen, 150, 135,(255,255,255))
+	jugarEnDimA = dibujarRectanguloWin95(screen, 550,125, 100, 50, 2,1)
+	if dimAltas:
+		dibujarRectanguloWin95(screen, 550,125, 100, 50, 2,1)
+		dibujarTexto("ON", font, screen, 570, 125,(0,0,0))
+	elif not dimAltas:
+		dibujarRectanguloWin95(screen, 550,125, 100, 50, 2,1)
+		dibujarTexto("OFF",font,screen,570,125,(0,0,0))
+
+	dibujarTexto("Reiniciar puntajes", font, screen, 150, 250,(255,255,255))
+	reiniciarPunt = dibujarRectanguloWin95(screen, 550, 250, 100, 50,2,1)
+	if reiniPunt:
+		dibujarRectanguloWin95(screen, 550, 250, 100, 50,2,1)
+		dibujarTexto("DO", font, screen, 570, 250,(0,0,0))
+		reiniPunt = False
+	elif not reiniPunt:
+		dibujarRectanguloWin95(screen, 550, 250, 100, 50,2,1)
+		dibujarTexto("DO",font,screen,570,250,(0,0,0))
+
+	return VolvermenuExtras, jugarEnDimA, reiniciarPunt
+
+
 def main():
 	## Pygame 
 	#Inicializacion
@@ -727,12 +759,16 @@ def main():
 
 	# Variables
 	X,Y,screen,blanco,negro,verde_feo,azul,gris,gris_claro,gris_oscuro,clock,Pc95,iconos,winlogo,botonx,sabiasque,rectJugar,rectRankings,rectSalir,rectExtras,anchoRectWin,altoRectWin,posRectWinX,posRectWinY,posCuadros = variablesPygame()
+	icono = pygame.image.load("recursos/icono.png")
+	pygame.display.set_icon(icono)
+	pygame.display.set_caption('Conecta N!')
 	largoTab = int(2.9*X//4)
 	altoTab = int(9.5*Y//10)
 	iniciarMenu = True
 	empezarJuego = False
 	iniciarRank=False
 	iniciarMenu = True
+	iniciarExtras = False
 	jugador1, jugador2 = jugadores()
 	iniciarNombres=False
 	runningJuego = False
@@ -752,6 +788,10 @@ def main():
 	margenLeft=133
 	margenSup=145
 	lado = 87
+
+	dimAltas = False
+	reiniPunt = False
+	runningExtras = False
 	###############################################
 	
 
@@ -803,6 +843,7 @@ def main():
 							# Empieza la pantalla de extras
 							click(2, Y - 23, 70, 20,"Extras",23,Y - 18,negro,gris_claro,winlogo,screen,Y)   
 							iniciarMenu = False
+							iniciarExtras = True
 					if iniciarRank:
 						# Si esta en rankings
 						# Iniciar el menu de rankings
@@ -815,6 +856,22 @@ def main():
 							running = False
 							iniciarRank = False
 							salir(font, screen)
+
+					if runningExtras:
+						if extrasMenu.collidepoint(pygame.mouse.get_pos()):
+							iniciarMenu = True
+							runningExtras = False
+							iniciarExtras = False
+
+						elif extrasDimA.collidepoint(pygame.mouse.get_pos()) and not dimAltas:
+							dimAltas = True
+
+						elif extrasDimA.collidepoint(pygame.mouse.get_pos()) and dimAltas:
+							dimAltas = False
+
+						elif extrasRePunt.collidepoint(pygame.mouse.get_pos()):
+							reiniPunt = True
+							open('nombrepuntaje.txt', 'w').close()
 
 					if iniciarNombres:
 						# Si esta en la pantalla de iniciar los nombres 
@@ -867,35 +924,66 @@ def main():
 										z , y, x = numTableroActual, fil, casilla
 										# Si es valida
 										if esValida(superTablero, z, y, x):
-											# Se refleja en el tablero de texto y en el grafico
-											superTablero = reflejarEnTablero(superTablero,z,y,x,jugadorActual.turno)
-											tableros[numTableroActual] = dibujarFicha(tableroActual,casillas[fil][casilla],screen,pos[0][0],pos[0][1],numTableroActual,jugadorActual.turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs,y,x)
-											lineasHechas = lineaHecha(superTablero, z,y,x,jugadorActual.turno,jugadorActual)
-											letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
-											# Si se hizo una linea
-											if lineasHechas > 0:
-												jugadorActual.puntos = anadirPuntos(lineasHechas, jugadorActual)
-												jugadorActual.lineas = anadirLinea(lineasHechas, jugadorActual)
+											if not dimAltas:
+												# Se refleja en el tablero de texto y en el grafico
+												superTablero = reflejarEnTablero(superTablero,z,y,x,jugadorActual.turno)
+												tableros[numTableroActual] = dibujarFicha(tableroActual,casillas[fil][casilla],screen,pos[0][0],pos[0][1],numTableroActual,jugadorActual.turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs,y,x)
+												lineasHechas = lineaHecha(superTablero, z,y,x,jugadorActual.turno,jugadorActual)
 												letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
-											lineasHechas = 0
-											espacioLibre += -1
-											# Si no quedan mas espacios libres
-											if espacioLibre == 0:
-												runningJuego = False
-												aResultado = True
-												font2 = pygame.font.SysFont("OpenSansSemibold", 45)
-												pygame.mouse.set_cursor(*pygame.cursors.tri_left)
-												rectsi, rectno = resultado(jugador1, jugador2, font2, screen,Dimension)
-											# Si quedan espacios libres
-											elif espacioLibre > 0:
-												if cambiarJugador(jugadorActual.turno) == 1:
-													jugadorActual = jugador1
+												# Si se hizo una linea
+												if lineasHechas > 0:
+													jugadorActual.puntos = anadirPuntos(lineasHechas, jugadorActual)
+													jugadorActual.lineas = anadirLinea(lineasHechas, jugadorActual)
 													letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
-												elif cambiarJugador(jugadorActual.turno) == 2:
-													jugadorActual = jugador2
+												lineasHechas = 0
+												espacioLibre += -1
+												# Si no quedan mas espacios libres
+												if espacioLibre == 0:
+													runningJuego = False
+													aResultado = True
+													font2 = pygame.font.SysFont("OpenSansSemibold", 45)
+													pygame.mouse.set_cursor(*pygame.cursors.tri_left)
+													rectsi, rectno = resultado(jugador1, jugador2, font2, screen,Dimension)
+												# Si quedan espacios libres
+												elif espacioLibre > 0:
+													if cambiarJugador(jugadorActual.turno) == 1:
+														jugadorActual = jugador1
+														letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
+													elif cambiarJugador(jugadorActual.turno) == 2:
+														jugadorActual = jugador2
+														letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
+													# Dibuja el turno del jugador actual
+													dibujarTexto(jugadorActual.nombre + ", es tu turno", font, screen, 240-10*len(jugadorActual.nombre),60,(255,255,255))
+											if dimAltas:
+												for i in range(Dimension):
+													superTablero = reflejarEnTablero(superTablero,i,y,x,jugadorActual.turno)
+													tableros[i] = dibujarFicha(tableroActual,casillas[fil][casilla],screen,pos[0][0],pos[0][1],i,jugadorActual.turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs,y,x)
+												lineasHechas = lineaHecha(superTablero, z,y,x,jugadorActual.turno,jugadorActual)
+												letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
+												# Si se hizo una linea
+												if lineasHechas > 0:
+													jugadorActual.puntos = anadirPuntos(lineasHechas, jugadorActual)
+													jugadorActual.lineas = anadirLinea(lineasHechas, jugadorActual)
 													letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
-												# Dibuja el turno del jugador actual
-												dibujarTexto(jugadorActual.nombre + ", es tu turno", font, screen, 240-10*len(jugadorActual.nombre),60,(255,255,255))
+												lineasHechas = 0
+												espacioLibre += -Dimension
+												# Si no quedan mas espacios libres
+												if espacioLibre == 0:
+													runningJuego = False
+													aResultado = True
+													font2 = pygame.font.SysFont("OpenSansSemibold", 45)
+													pygame.mouse.set_cursor(*pygame.cursors.tri_left)
+													rectsi, rectno = resultado(jugador1, jugador2, font2, screen,Dimension)
+												# Si quedan espacios libres
+												elif espacioLibre > 0:
+													if cambiarJugador(jugadorActual.turno) == 1:
+														jugadorActual = jugador1
+														letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
+													elif cambiarJugador(jugadorActual.turno) == 2:
+														jugadorActual = jugador2
+														letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
+													# Dibuja el turno del jugador actual
+													dibujarTexto(jugadorActual.nombre + ", es tu turno", font, screen, 240-10*len(jugadorActual.nombre),60,(255,255,255))
 										# Si no es valida se vuelve a realizar la vuelta
 										elif not esValida(superTablero, z,y,x):
 											error(screen)
@@ -989,6 +1077,10 @@ def main():
 							dibujarTexto(jugadorActual.nombre + ", es tu turno", font, screen, 240-10*len(jugadorActual.nombre),60,(255,255,255))
 							letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
 
+		if iniciarExtras:
+			extrasMenu, extrasDimA, extrasRePunt= dibujarExtras(screen, dimAltas, reiniPunt)
+			runningExtras = True
+		
 		if empezarJuego:
 			# Si el juego va a empezar, se inicializan las variables
 			OtraPartida = True
