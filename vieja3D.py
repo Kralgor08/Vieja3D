@@ -138,8 +138,9 @@ def verificarListaCompleja(*args):
 # Verifica si se hizo una linea horizontal en la fila actual
 def lineaHorizontalHecha(superTablero, tablero, fila):
 	filaActual = superTablero[tablero][fila]
-	
+
 	return verificarLista(filaActual)
+
 
 # Verifica si se hizo una linea vertical en la fila actual
 def lineaVerticalHecha(superTablero, tablero, fila, casilla):
@@ -164,19 +165,10 @@ def lineaVerticalHecha(superTablero, tablero, fila, casilla):
 	for Z in range(len(superTablero)):
 		columnasEnZ.append(superTablero[Z][fila][casilla])
 
+	haylinea = verificarListaCompleja(columnasEnTablero, columnasEnZ)
+
 	# Luego, se verifica si hay una linea en esos arreglos de columnas.
-	return verificarListaCompleja(columnasEnTablero, columnasEnZ)
-
-
-# Funcion para ahorrar espacio al determinar si hay una linea diagonal en z
-def diagonalesEnZ(superTablero, lista, argumento):
-	for tableros in range(len(superTablero)):
-		for fila in range(len(superTablero[tableros])):
-			for casilla in range(len(superTablero[tableros][fila])):
-				if argumento:
-					lista.append(superTablero[tableros][fila][casilla])
-
-	return lista
+	return haylinea, columnasEnTablero, columnasEnZ
 
 
 # Verifica si se hizo una linea diagonal en el tablero actual
@@ -202,13 +194,13 @@ def lineaDiagonalHecha(superTablero, tablero,filat,casillat):
 
 	lineas = verificarListaCompleja(diagonalEnTablero, diagonalSecundariaEnTablero)
 
-	return lineas
+	return lineas, diagonalEnTablero, diagonalSecundariaEnTablero
 
 
 # Revisa cuantas lineas en total se han hecho y devuelve ese numero
 def lineaHecha(superTablero, tablero, fila, casilla, turno,jugadorActual):
-	lineasVerticales = lineaVerticalHecha(superTablero, tablero, fila, casilla)
-	lineasDiagonales = lineaDiagonalHecha(superTablero, tablero, fila, casilla)
+	lineasVerticales = lineaVerticalHecha(superTablero, tablero, fila, casilla)[0]
+	lineasDiagonales = lineaDiagonalHecha(superTablero, tablero, fila, casilla)[0]
 	lineasTotales = jugadorActual.lineas
 
 	if lineaHorizontalHecha(superTablero, tablero, fila):
@@ -588,7 +580,7 @@ def dibujarCasillas(Dimension,largoTab,altoTab,numeroDeTabs,screen):
 
 
 # Funcion que dibuja la ficha en la posicion valida
-def dibujarFicha(superficie, rect, screen, posX,posY,mult,turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs,fila,casilla):
+def dibujarFicha(superficie, rect, screen, posX,posY,mult,turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs,fila,casilla,superTablero, tablero):
 	# Dibuja los tableros que estan detras del actual
 	dibujarCositos(verde_feo,screen,X,Y,oscuro,Dimension,numeroDeTabs-1)
 
@@ -599,11 +591,54 @@ def dibujarFicha(superficie, rect, screen, posX,posY,mult,turno,verde_feo,X,Y,os
 	elif turno == 2:
 		imagen = pygame.image.load("recursos/O{}.png".format(Dimension))
 	
-	# Dibuja la imagen		
 	pos = superficie.get_rect()
+	pos2 = imagen.get_rect()
 	q = 6*mult
 	p = 5*mult
+	
+
+	
+	# Dibuja la imagen	
 	superficie.blit(imagen,(26//Dimension + (348//Dimension)*casilla,21//Dimension + (344//Dimension)*fila))
+	
+	# Dibuja las lineas cuando hay una linea horizontal
+	if lineaHorizontalHecha(superTablero, tablero, fila):
+		if turno == 1:
+			pygame.draw.line(superficie,(4,126,126),(0+174//Dimension,172//Dimension + 344//Dimension*fila),(348-174//Dimension,172//Dimension+ 344//Dimension*fila),5)
+		elif turno == 2:
+			pygame.draw.line(superficie,(244,67,54),(0+174//Dimension,172//Dimension + 344//Dimension*fila),(348-174//Dimension,172//Dimension+ 344//Dimension*fila),5)
+	
+	haylineaVert, columnasEnTablero, columnasEnZ = lineaVerticalHecha(superTablero, tablero, fila, casilla)
+	# Dibuja las lineas cuando hay una linea vertical
+	if haylineaVert:
+		if verificarLista(columnasEnTablero):
+			if turno == 1:
+				pygame.draw.line(superficie,(4,126,126),(174//Dimension + 348//Dimension*casilla,0+172//Dimension),(174//Dimension + 348//Dimension*casilla,344-172//Dimension),5)
+			elif turno == 2:
+				pygame.draw.line(superficie,(244,67,54),(174//Dimension + 348//Dimension*casilla,0+172//Dimension),(174//Dimension + 348//Dimension*casilla,344-172//Dimension),5)
+		# Dibuja un punto que simboliza la linea entre tableros
+		if verificarLista(columnasEnZ):
+			if turno == 1:
+				pygame.draw.circle(superficie,(4,126,126),(180//Dimension + 348//Dimension*casilla,178//Dimension + 344//Dimension*fila),10)
+			if turno == 2:
+				pygame.draw.circle(superficie,(244,67,54),(180//Dimension + 348//Dimension*casilla,178//Dimension + 344//Dimension*fila),10)	
+
+	haylineaDiag, diagonalEnTablero, diagonalSecundariaEnTablero = lineaDiagonalHecha(superTablero, tablero,fila,casilla)
+	# Dibuja las lineas cuando hay una linea diagonal
+	if haylineaDiag:
+		if verificarLista(diagonalEnTablero):
+			if turno == 1:
+				pygame.draw.line(superficie,(4,126,126),(174//Dimension,172//Dimension),(348-174//Dimension,344-172//Dimension),8)
+			elif turno == 2:
+				pygame.draw.line(superficie,(244,67,54),(174//Dimension,172//Dimension),(348-174//Dimension,344-172//Dimension),8)
+		
+		if verificarLista(diagonalSecundariaEnTablero):
+			if turno == 1:
+				pygame.draw.line(superficie,(4,126,126),(348-174//Dimension,172//Dimension),(174//Dimension,344-172//Dimension),8)
+			elif turno == 2:
+				pygame.draw.line(superficie,(244,67,54),(348-174//Dimension,172//Dimension),(174//Dimension,344-172//Dimension),8)
+		
+
 	screen.blit(superficie,(posX+5*p-5*q,posY-5*p+5*q))
 	
 	return superficie
@@ -923,8 +958,8 @@ def main():
 											if not dimAltas:
 												# Se refleja en el tablero de texto y en el grafico
 												superTablero = reflejarEnTablero(superTablero,z,y,x,jugadorActual.turno)
-												tableros[numTableroActual] = dibujarFicha(tableroActual,casillas[fil][casilla],screen,pos[0][0],pos[0][1],numTableroActual,jugadorActual.turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs,y,x)
 												lineasHechas = lineaHecha(superTablero, z,y,x,jugadorActual.turno,jugadorActual)
+												tableros[numTableroActual] = dibujarFicha(tableroActual,casillas[fil][casilla],screen,pos[0][0],pos[0][1],numTableroActual,jugadorActual.turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs,y,x,superTablero,numTableroActual)
 												letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
 												# Si se hizo una linea
 												if lineasHechas > 0:
@@ -950,10 +985,11 @@ def main():
 														letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
 													# Dibuja el turno del jugador actual
 													dibujarTexto(jugadorActual.nombre + ", es tu turno", font, screen, 240-10*len(jugadorActual.nombre),60,(255,255,255))
+											# Si se activa la opcion de dimensiones altas
 											if dimAltas:
 												for i in range(Dimension):
 													superTablero = reflejarEnTablero(superTablero,i,y,x,jugadorActual.turno)
-													tableros[i] = dibujarFicha(tableroActual,casillas[fil][casilla],screen,pos[0][0],pos[0][1],i,jugadorActual.turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs,y,x)
+													tableros[i] = dibujarFicha(tableroActual,casillas[fil][casilla],screen,pos[0][0],pos[0][1],i,jugadorActual.turno,verde_feo,X,Y,oscuro,Dimension,numeroDeTabs,y,x,superTablero,numTableroActual)
 												lineasHechas = lineaHecha(superTablero, z,y,x,jugadorActual.turno,jugadorActual)
 												letrajuego(screen,jugador1.nombre,jugador2.nombre,"lineas: "+str(jugador1.lineas),"lineas: "+str(jugador2.lineas),"Puntos: "+str(jugador1.puntos),"Puntos: "+str(jugador2.puntos),Dimension,X,Y)
 												# Si se hizo una linea
@@ -987,7 +1023,7 @@ def main():
 			elif event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_DOWN:
 					# Cuando se presiona la flecha hacia abajo
-					if runningJuego:
+					if runningJuego and not dimAltas:
 						# Cambia el tablero actual
 						# El tablero lo coloca en una lista de tableros guardados y dibuja los restantes. Cada vez que se presiona abajo se anade otro tablero hasta quedar 1
 						if len(tableros) > 1:
@@ -1061,7 +1097,7 @@ def main():
 
 				# Si se presiona la flecha hacia arriba
 				if event.key == pygame.K_UP:
-					if runningJuego:
+					if runningJuego and not dimAltas:
 						# Se anaden los tableros guardados a la lista de tableros y se dibujan
 						if len(tablerosGuardados) > 0:
 							numeroDeTabs = numeroDeTabs+1
