@@ -19,9 +19,11 @@ Y Pygame (Testeado con Pygame 1.9.6):
 
 https://pypi.org/project/pygame/
 
-El juego utiliza una fuente externa:
+El juego utiliza dos fuentes externas:
 
-Open Sans: https://www.fontsquirrel.com/fonts/open-sans
+Open Sans (Semibold): https://www.fontsquirrel.com/fonts/open-sans
+
+Free Pixel (Regular): https://www.dafont.com/free-pixel.font
 
 
 
